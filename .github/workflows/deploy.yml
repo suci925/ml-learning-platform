@@ -23,11 +23,11 @@ jobs:
       - run: npm ci
       - run: npm run build -- --base "/${{ github.event.repository.name }}/"
 
-      - name: Enable GitHub Pages
-        run: |
-          gh api repos/${{ github.repository }}/pages -X PUT -f "source[branch]=gh-pages" -f "source[path]=/" || true
-
       - uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: dist
+
+      - name: Enable GitHub Pages
+        run: |
+          gh api repos/${{ github.repository }}/pages -X PUT -f "source[branch]=gh-pages" -f "source[path]=/" || true
