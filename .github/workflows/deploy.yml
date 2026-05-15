@@ -8,6 +8,7 @@ on:
 permissions:
   contents: write
   pages: write
+  actions: read
 
 jobs:
   build-and-deploy:
@@ -28,6 +29,18 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: dist
 
+      - name: Check Pages status
+        run: |
+          echo "=== Pages status ==="
+          gh api repos/${{ github.repository }}/pages 2>&1 || echo "Pages not configured yet"
+
       - name: Enable GitHub Pages
         run: |
-          gh api repos/${{ github.repository }}/pages -X PUT -f "source[branch]=gh-pages" -f "source[path]=/" || true
+          echo "=== Enabling Pages ==="
+          gh api repos/${{ github.repository }}/pages -X PUT \
+            -F "source[branch]=gh-pages" \
+            -F "source[path]=/" 2>&1
+
+      - name: Show deployed URL
+        run: |
+          echo "Site URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
